@@ -1,0 +1,187 @@
+{
+    "mappings": {
+        "resource": {
+            "properties": {
+                "body": {
+                    "type": "keyword",
+                    "fields": {
+                        "_fulltext": {
+                            "type": "text",
+                            "analyzer": "englishfulltext"
+                        }
+                    },
+                    "include_in_all": true
+                },
+                "description": {
+                    "type": "keyword",
+                    "fields": {
+                        "_fulltext": {
+                            "type": "text",
+                            "analyzer": "englishfulltext"
+                        }
+                    },
+                    "include_in_all": true
+                },
+                "docs": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "key": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        },
+                        "label": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "id": {
+                    "type": "integer",
+                    "include_in_all": true
+                },
+                "pocs": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "email": {
+                            "type": "keyword"
+                        },
+                        "name": {
+                            "type": "nested",
+                            "include_in_root": true,
+                            "properties": {
+                                "firstname": {
+                                    "type": "keyword",
+                                    "fields": {
+                                        "_fulltext": {
+                                            "type": "text",
+                                            "analyzer": "englishfulltext"
+                                        }
+                                    }
+                                },
+                                "lastname": {
+                                    "type": "keyword",
+                                    "fields": {
+                                        "_fulltext": {
+                                            "type": "text",
+                                            "analyzer": "englishfulltext"
+                                        }
+                                    }
+                                },
+                                "middlename": {
+                                    "type": "keyword",
+                                    "fields": {
+                                        "_fulltext": {
+                                            "type": "text",
+                                            "analyzer": "englishfulltext"
+                                        }
+                                    }
+                                },
+                                "prefix": {
+                                    "type": "keyword"
+                                },
+                                "suffix": {
+                                    "type": "keyword"
+                                }
+                            }
+                        },
+                        "phone": {
+                            "type": "keyword"
+                        },
+                        "title": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "researchAreas": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "key": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        },
+                        "label": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "researchTypes": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "key": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        },
+                        "label": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "resourceAccess": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "type": {
+                            "type": "keyword"
+                        },
+                        "notes": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "keyword",
+                    "fields": {
+                        "_fulltext": {
+                            "type": "text",
+                            "analyzer": "englishfulltext"
+                        }
+                    },
+                    "include_in_all": true
+                },
+                "toolTypes": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "key": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        },
+                        "label": {
+                            "type": "keyword"
+                        }
+                    }
+                },
+                "toolSubtypes": {
+                    "type": "nested",
+                    "include_in_root": true,
+                    "properties": {
+                        "key": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        },
+                        "label": {
+                            "type": "keyword"
+                        },
+                        "parentKey": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata": true
+                        }                        
+                    }
+                },
+                "website": {
+                    "type": "keyword",
+                    "include_in_all": true
+                }
+            }
+        }
+    }
+}

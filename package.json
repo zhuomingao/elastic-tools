@@ -1,0 +1,36 @@
+{
+  "name": "elastic-tools",
+  "version": "1.0.0",
+  "description": "Node Library of Common Elasticsearch Helper functions used across platforms",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --collectCoverageFrom=lib/**.js --coverage lib"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NCIOCPL/elastic-tools.git"
+  },
+  "author": "Bryan Pizzillo",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/NCIOCPL/elastic-tools/issues"
+  },
+  "homepage": "https://github.com/NCIOCPL/elastic-tools#readme",
+  "dependencies": {
+    "elasticsearch": "^14.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.1.1",
+    "@types/node": "^10.3.4",
+    "jest": "^23.1.0",
+    "nock": "^9.3.3",
+    "moment": "^2.22.0",
+    "winston": "^3.0.0",
+    "winston-null-transport": "git+https://github.com/NCIOCPL/winston-null-transport.git#1.0.0"
+  }
+}
