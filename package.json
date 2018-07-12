@@ -22,14 +22,14 @@
   },
   "homepage": "https://github.com/NCIOCPL/elastic-tools#readme",
   "dependencies": {
-    "elasticsearch": "^14.2.2"
+    "elasticsearch": "^14.2.2",
+    "moment": "^2.22.0"
   },
   "devDependencies": {
     "@types/jest": "^23.1.1",
     "@types/node": "^10.3.4",
     "jest": "^23.1.0",
-    "nock": "^9.3.3",
-    "moment": "^2.22.0",
+    "nock": "^9.3.3",    
     "winston": "^3.0.0",
     "winston-null-transport": "git+https://github.com/NCIOCPL/winston-null-transport.git#1.0.0"
   }
