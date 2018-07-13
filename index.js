@@ -252,6 +252,73 @@ class ElasticTools {
     }
 
     /**
+     * @typedef {Object} BulkError
+     * @property {string} id The id of the document attempting to be created
+     * @property {object} error The elastic search error (in its structure)
+     */
+
+    /**
+     * @typedef {Object} BulkResponse
+     * @property {string[]} created The ids of the created documents
+     * @property {string[]} updated The ids of the updated documents - can contain dupes
+     * @property {BulkError} errors The errors occurred in indexing, ids can be duplicated
+     */
+
+    /**
+     * Indexes a collection of documents where each document is a ID/Doc pair.
+     * NOTE: This will NOT validate, so don't expect nice error messages.
+     * @param {*} indexName The index anem to store the documents
+     * @param {*} type The elasticsearch type of the document
+     * @param {Array of object} idDocArr An array of id/document pairs. e.g. [[1, {}], [2, {}]]. 
+     * NOTE: this will not check if IDs are duplicated. It will also not check if the documents
+     * to be created already exist! Existing IDs will have their records updated.
+     * @returns {BulkResponse} The results of the request
+     */
+    async indexDocumentBulk(indexName, type, idDocArr) {
+        //Transform the collection of docs into the ES format.
+        //The format is:
+        //Action
+        //document
+        //...
+        //Action
+        //document
+        const body = idDocArr.reduce(
+            (ac, c) => [
+                ...ac,
+                { index: { _index: indexName, _type: type, _id: c[0]}},
+                c[1]
+            ],
+            []
+        );
+
+        let res;
+        try {
+          res = await this.client.bulk({
+              body,
+              requestTimeout: 120000 //2 minutes should be plenty, otherwise, use smaller chunks
+          });
+        } catch (err) {
+            this.logger.error(`Server error occurred indexing documents in bulk.`);
+            throw(err);
+        }
+
+        //Extract out the index requests
+        //Look at the test cases if you need to understand what the response looks like.
+        const indexedItems = res.items.filter(i => i.index).map(i => i.index);
+
+        //Each index request can create, update or fail. Let's make it easier to deal with
+        //for the consumer.
+        const methodResponse = {
+            created: indexedItems.filter(i => i.result === 'created').map(i => i._id),
+            updated: indexedItems.filter(i => i.result === 'updated').map(i => i._id), 
+            errors: indexedItems.filter(i => i.error).map(i => ({ id: i._id, error: i.error}))
+        }
+
+        return methodResponse;
+    }
+
+
+    /**
      * Cleans up all the old unused indices. Always at least one is kept.
      * @param {string} indexPrefix The prefix for the timestamped indices. (Usually the alias name)
      * @param {Number} daysToKeep The number of days to keep (Default: 5)
@@ -287,8 +354,6 @@ class ElasticTools {
             );
         }
     }
-
-    //TODO: indexBulk
 
 }
 

@@ -278,6 +278,7 @@ describe('ElasticTools', async() => {
             const indices = await estools.getIndicesOlderThan(indexName, 1525225677000);
             
             expect(indices).toEqual(expected);
+            expect(scope.isDone()).toBeTruthy();
         });
 
         it('returns 0 when 1 not old', async() => {
@@ -300,6 +301,7 @@ describe('ElasticTools', async() => {
             const indices = await estools.getIndicesOlderThan(indexName, 1525225677000);
             
             expect(indices).toEqual(expected);
+            expect(scope.isDone()).toBeTruthy();
         });
 
         it('returns 2 in order when 2 of 3 are old', async() => {
@@ -324,10 +326,15 @@ describe('ElasticTools', async() => {
             const indices = await estools.getIndicesOlderThan(indexName, 1525225677000);
             
             expect(indices).toEqual(expected);
+            expect(scope.isDone()).toBeTruthy();
         });        
 
         it('handles server error', async () => {
             const indexName = 'bryantestidx';
+
+            const scope = nock('http://example.org:9200')
+            .get(`/${indexName}*/_settings/index.creation_date`)
+            .reply(500);
 
             const client = new elasticsearch.Client({
                 host: 'http://example.org:9200',
@@ -335,11 +342,15 @@ describe('ElasticTools', async() => {
             });            
             
             const estools = new ElasticTools(logger, client);
+
+            expect.assertions(2);
             try {
                 const indices = await estools.getIndicesOlderThan(indexName, 1525225677000);
             } catch (err) {
                 expect(err).toBeTruthy();
             }
+
+            expect(scope.isDone()).toBeTruthy();
         });
 
         it('checks alias name', async () => {
@@ -353,8 +364,10 @@ describe('ElasticTools', async() => {
             try {
                 const indices = await estools.getIndicesOlderThan();
             } catch (err) {
-                expect(err).toBeTruthy();
-            }                   
+                expect(err).toMatchObject(
+                    { message: "aliasName cannot be null" }
+                );
+            }
         });
         
     })
@@ -722,6 +735,9 @@ describe('ElasticTools', async() => {
 
         if ('handles Exception', async () => {
             const aliasName = 'bryantestidx';
+            const scope = nock('http://example.org:9200')
+                .get(`/_alias/${aliasName}`)
+                .reply(500);
 
             const client = new elasticsearch.Client({
                 host: 'http://example.org:9200',
@@ -731,15 +747,253 @@ describe('ElasticTools', async() => {
             const estools = new ElasticTools(logger, client);
 
             const expectedIndices = [];
+            expect.assertions(1);
             try {
                 const actualIndices = await estools.getIndicesForAlias(aliasName);
             } catch (err) {
                 expect(err).toBeTruthy();
             }
+
+            expect(nock.isDone()).toBeTruthy();
         });
     })
 
     describe('indexDocument', async () => {
+
+    });
+
+    describe('indexDocumentBulk', async () => {
+        
+        const goodCreateResponse = {
+            "took": 11,
+            "errors": false,
+            "items": [
+                {
+                    "index": {
+                        "_index": "twitter",
+                        "_type": "tweet",
+                        "_id": "11",
+                        "_version": 1,
+                        "result": "created",
+                        "_shards": {
+                            "total": 3,
+                            "successful": 1,
+                            "failed": 0
+                        },
+                        "created": true,
+                        "status": 201
+                    }
+                }
+            ]
+        }
+
+        const goodUpdateResponse = {
+            "took": 13,
+            "errors": false,
+            "items": [
+                {
+                    "index": {
+                        "_index": "twitter",
+                        "_type": "tweet",
+                        "_id": "11",
+                        "_version": 2,
+                        "result": "updated",
+                        "_shards": {
+                            "total": 3,
+                            "successful": 1,
+                            "failed": 0
+                        },
+                        "created": false,
+                        "status": 200
+                    }
+                }
+            ]
+        }
+
+        const goodCreateUpdateResponse = {
+            "took": 8,
+            "errors": false,
+            "items": [
+                {
+                    "index": {
+                        "_index": "twitter",
+                        "_type": "tweet",
+                        "_id": "12",
+                        "_version": 1,
+                        "result": "created",
+                        "_shards": {
+                            "total": 3,
+                            "successful": 1,
+                            "failed": 0
+                        },
+                        "created": true,
+                        "status": 201
+                    }
+                },
+                {
+                    "index": {
+                        "_index": "twitter",
+                        "_type": "tweet",
+                        "_id": "12",
+                        "_version": 2,
+                        "result": "updated",
+                        "_shards": {
+                            "total": 3,
+                            "successful": 1,
+                            "failed": 0
+                        },
+                        "created": false,
+                        "status": 200
+                    }
+                }
+            ]
+        }
+        
+        const errorResponse = {
+            "took": 44,
+            "errors": true,
+            "items": [
+                {
+                    "index": {
+                        "_index": "twitter",
+                        "_type": "tweet",
+                        "_id": "11",
+                        "status": 400,
+                        "error": {
+                            "type": "mapper_parsing_exception",
+                            "reason": "failed to parse",
+                            "caused_by": {
+                                "type": "json_parse_exception",
+                                "reason": "Unrecognized token 'tweettweet': was expecting 'null', 'true', 'false' or NaN\n at [Source: org.elasticsearch.common.bytes.BytesReference$MarkSupportingStreamInputWrapper@51d9914e; line: 1, column: 44]"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+
+        const num11Req = '{"index":{"_index":"twitter","_type":"tweet","_id":"11"}}\n' +
+                         '{"username":"bob","message":"tweettweet"}\n';
+
+        const num12Req = '{"index":{"_index":"twitter","_type":"tweet","_id":"12"}}\n' +
+                         '{"username":"bob","message":"tweettweet"}\n' +
+                         '{"index":{"_index":"twitter","_type":"tweet","_id":"12"}}\n' +
+                         '{"username":"bob","message":"tweettweet"}\n';
+
+        it.each([
+            [
+                '(creates) without issue',
+                [ [ "11", { "username": "bob", "message": "tweettweet" } ] ],
+                num11Req,
+                goodCreateResponse,
+                {
+                    created: ['11'],
+                    updated: [],
+                    errors: []
+                }
+            ],
+            [
+                '(updates) without issue',
+                [ [ "11", { "username": "bob", "message": "tweettweet" } ] ],
+                num11Req,
+                goodUpdateResponse,
+                {
+                    created: [],
+                    updated: ['11'],
+                    errors: []
+                }
+            ],
+            [
+                'creates than updates without issue',
+                [ 
+                    [ "12", { "username": "bob", "message": "tweettweet" } ],
+                    [ "12", { "username": "bob", "message": "tweettweet" } ]
+                ],
+                num12Req,
+                goodCreateUpdateResponse,
+                {
+                    created: ['12'],
+                    updated: ['12'],
+                    errors: []
+                }
+            ], 
+            [
+                'has errors in documents',
+                //yeah, this looks valid... we are still gonna send back an error. :)
+                [ [ "11", { "username": "bob", "message": "tweettweet" } ] ],
+                num11Req,
+                errorResponse,
+                {
+                    created: [],
+                    updated: [],
+                    errors: [{
+                        id: "11",
+                        "error": {
+                            "type": "mapper_parsing_exception",
+                            "reason": "failed to parse",
+                            "caused_by": {
+                                "type": "json_parse_exception",
+                                "reason": "Unrecognized token 'tweettweet': was expecting 'null', 'true', 'false' or NaN\n at [Source: org.elasticsearch.common.bytes.BytesReference$MarkSupportingStreamInputWrapper@51d9914e; line: 1, column: 44]"
+                            }
+                        }
+                    }]
+                }
+            ]//,
+            //[
+            //    'does everything',
+            //]
+        ])(
+            'indexes %s', 
+            async (name, docArr, reqbody, response, expected) => {
+                const scope = nock('http://example.org:9200')
+                .post(`/_bulk`, (body) => {
+                    return body === reqbody;                    
+                })
+                .reply(200, response);
+
+                const client = new elasticsearch.Client({
+                    host: 'http://example.org:9200',
+                    apiVersion: '5.6'
+                });            
+        
+                const estools = new ElasticTools(logger, client);
+
+                const actual = await estools.indexDocumentBulk("twitter", "tweet", docArr);
+                expect(actual).toEqual(expected)
+
+                expect(nock.isDone()).toBeTruthy();
+            }
+        )
+
+        it('throws on server error', async () => {
+            const scope = nock('http://example.org:9200')
+            .post(`/_bulk`, (body) => {
+                return true
+            })
+            .reply(500);
+
+            const client = new elasticsearch.Client({
+                host: 'http://example.org:9200',
+                apiVersion: '5.6'
+            });            
+    
+            const estools = new ElasticTools(logger, client);
+
+            expect.assertions(2);
+            try {
+                const actual = await estools.indexDocumentBulk(
+                    "twitter", 
+                    "tweet", 
+                    [ [ "11", { "username": "bob", "message": "tweettweet" } ] ]
+                );
+            } catch (err) {
+                expect(err).toMatchObject({
+                    message: "Internal Server Error"
+                })
+            }
+            
+            expect(nock.isDone()).toBeTruthy();
+        })
 
     });
 
@@ -770,6 +1024,7 @@ describe('ElasticTools', async() => {
 
     });
 
+    
     describe('cleanupOldIndices', async () => {
         it ('has nothing to clean', async () => {
             const now = Date.now();
@@ -881,5 +1136,5 @@ describe('ElasticTools', async() => {
             expect(nock.isDone()).toBeTruthy();
         })
     });
-
+    
 })

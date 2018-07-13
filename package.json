@@ -1,6 +1,6 @@
 {
   "name": "elastic-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Node Library of Common Elasticsearch Helper functions used across platforms",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,8 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coverageDirectory": "coverage"
+    "coverageDirectory": "coverage",
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -26,10 +27,11 @@
     "moment": "^2.22.0"
   },
   "devDependencies": {
+    "@types/elasticsearch": "^5.0.24",
     "@types/jest": "^23.1.1",
     "@types/node": "^10.3.4",
     "jest": "^23.1.0",
-    "nock": "^9.3.3",    
+    "nock": "^9.3.3",
     "winston": "^3.0.0",
     "winston-null-transport": "git+https://github.com/NCIOCPL/winston-null-transport.git#1.0.0"
   }
