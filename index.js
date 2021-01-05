@@ -241,7 +241,6 @@ class ElasticTools {
         try {
             await this.client.index({
                 index: indexName,
-                type,
                 id,
                 body: document
             })
@@ -285,7 +284,7 @@ class ElasticTools {
         const body = idDocArr.reduce(
             (ac, c) => [
                 ...ac,
-                { index: { _index: indexName, _type: type, _id: c[0]}},
+                { index: { _index: indexName, _id: c[0]}},
                 c[1]
             ],
             []
@@ -358,4 +357,3 @@ class ElasticTools {
 }
 
 module.exports = ElasticTools;
-

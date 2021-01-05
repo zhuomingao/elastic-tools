@@ -1,9 +1,9 @@
 {
     "settings": {
         "index": {
-            "mapper": {
-                "dynamic": false
-            },
+            
+                
+          
             "number_of_shards": "1",
             "analysis": {
                 "filter": {
@@ -105,8 +105,8 @@
                         "tokenizer": "standard"
                     }
                 }
-            },
-            "number_of_replicas": "1"
+            }
+            
         }
     }
 }        

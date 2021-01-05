@@ -40,7 +40,7 @@ describe('ElasticTools', async() => {
             const urlRegex = /\/(.*)/;
             let interceptedIdx = '';
 
-            const scope = nock('http://example.org:9200')            
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')            
             .put(
                 (uri) => {
                     //So we need to get the index name the function created, and in elasticsearch,
@@ -61,8 +61,8 @@ describe('ElasticTools', async() => {
             .reply(200, {"acknowledged":true,"shards_acknowledged":true,"index":interceptedIdx} );
       
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
       
             const estools = new ElasticTools(logger, client);
@@ -102,7 +102,7 @@ describe('ElasticTools', async() => {
             const mappings = require(path.join(__dirname, 'data', '/mappings.json'));
             const settings = require(path.join(__dirname, 'data', 'settings.json'));
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .put(`/${indexName}`, {
                     settings: settings.settings,
                     mappings: mappings.mappings
@@ -110,8 +110,8 @@ describe('ElasticTools', async() => {
                 .reply(200, {"acknowledged":true,"shards_acknowledged":true,"index":indexName} );
           
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
           
             const estools = new ElasticTools(logger, client);
@@ -129,7 +129,7 @@ describe('ElasticTools', async() => {
             const mappings = require(path.join(__dirname, 'data', '/mappings.json'));
             const settings = require(path.join(__dirname, 'data', 'settings.json'));
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .put(`/${indexName}`, {
                     settings: settings.settings,
                     mappings: mappings.mappings
@@ -155,8 +155,8 @@ describe('ElasticTools', async() => {
                 );
           
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
                       
             const estools = new ElasticTools(logger, client);
@@ -177,13 +177,13 @@ describe('ElasticTools', async() => {
         it("optimizes the index", async() => {
             const indexName = 'bryantestidx';
           
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .post(`/${indexName}/_forcemerge?max_num_segments=1`, body => true)
                 .reply(200, {"_shards":{"total":2,"successful":1,"failed":0}});
           
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
           
             const estools = new ElasticTools(logger, client);
@@ -208,7 +208,7 @@ describe('ElasticTools', async() => {
         it("optimizes the index with delay", async() => {
             const indexName = 'bryantestidx';
           
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .post(`/${indexName}/_forcemerge?max_num_segments=1`, body => true)
                 .delay({
                     head: 89000
@@ -217,8 +217,8 @@ describe('ElasticTools', async() => {
                 
           
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
           
             const estools = new ElasticTools(logger, client);
@@ -231,7 +231,7 @@ describe('ElasticTools', async() => {
         it("optimizes the index with delay", async() => {
             const indexName = 'bryantestidx';
           
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .post(`/${indexName}/_forcemerge?max_num_segments=1`, body => true)
                 .delay({
                     head: 95000
@@ -240,8 +240,8 @@ describe('ElasticTools', async() => {
                 
           
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
           
             const estools = new ElasticTools(logger, client);
@@ -261,15 +261,15 @@ describe('ElasticTools', async() => {
         it('returns 1 when 1 is old', async() => {
             const indexName = 'bryantestidx';
             
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/${indexName}*/_settings/index.creation_date`)
                 .reply(200, {
                     "bryantestidx_1":{ "settings": {"index": {"creation_date":"1523901276157"}}}
                 });
             
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -284,15 +284,15 @@ describe('ElasticTools', async() => {
         it('returns 0 when 1 not old', async() => {
             const indexName = 'bryantestidx';
             
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/${indexName}*/_settings/index.creation_date`)
                 .reply(200, {
                     "bryantestidx_1":{ "settings": {"index": {"creation_date":"1525225677001"}}}
                 });
             
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -307,7 +307,7 @@ describe('ElasticTools', async() => {
         it('returns 2 in order when 2 of 3 are old', async() => {
             const indexName = 'bryantestidx';
             
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/${indexName}*/_settings/index.creation_date`)
                 .reply(200, {
                     "bryantestidx_1":{ "settings": {"index": {"creation_date":"1525225677001"}}},
@@ -316,8 +316,8 @@ describe('ElasticTools', async() => {
                 });
             
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -332,13 +332,13 @@ describe('ElasticTools', async() => {
         it('handles server error', async () => {
             const indexName = 'bryantestidx';
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .get(`/${indexName}*/_settings/index.creation_date`)
             .reply(500);
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -356,8 +356,8 @@ describe('ElasticTools', async() => {
         it('checks alias name', async () => {
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -382,7 +382,7 @@ describe('ElasticTools', async() => {
             const indexName = aliasName + "_1";
 
             //Setup nocks
-            const scope = nock('http://example.org:9200');
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200');
 
             //Get Indices for Alias, not finding any
             scope.get(`/_alias/${aliasName}`)
@@ -399,8 +399,8 @@ describe('ElasticTools', async() => {
                 .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -414,7 +414,7 @@ describe('ElasticTools', async() => {
             const indexName = aliasName + "_1";
             const removeIndex = aliasName + "_2";
             //Setup nocks
-            const scope = nock('http://example.org:9200');
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200');
 
             //Get Indices for Alias, not finding any
             // need nock for getIndicesForAlias
@@ -437,8 +437,8 @@ describe('ElasticTools', async() => {
                 .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -457,8 +457,8 @@ describe('ElasticTools', async() => {
         it('checks for at least one add or remove', async ()=> {
             
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -496,7 +496,7 @@ describe('ElasticTools', async() => {
 
             const index = "myindex";
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { add: { indices: index, alias: aliasName } }
@@ -505,8 +505,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -521,7 +521,7 @@ describe('ElasticTools', async() => {
 
             const index = [ "myindex" ];
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { add: { indices: index, alias: aliasName } }
@@ -530,8 +530,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -545,7 +545,7 @@ describe('ElasticTools', async() => {
         it('removes one arr', async() => {
             const index = [ "myindex" ];
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { remove: { indices: index, alias: aliasName } }
@@ -554,8 +554,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -569,7 +569,7 @@ describe('ElasticTools', async() => {
             const add = "myindex";
             const remove = "myindex3";
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { add: { indices: add, alias: aliasName } },
@@ -579,8 +579,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -593,7 +593,7 @@ describe('ElasticTools', async() => {
         it('adds many', async() => {
             const indices = ["myindex", "myindex2"];
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { add: { indices, alias: aliasName } }
@@ -602,8 +602,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -617,7 +617,7 @@ describe('ElasticTools', async() => {
         it('removes many', async() => {
             const indices = ["myindex", "myindex2"];
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { remove: { indices, alias: aliasName } }
@@ -626,8 +626,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -641,7 +641,7 @@ describe('ElasticTools', async() => {
             const add = ["myindex", "myindex2"];
             const remove = ["myindex3", "myindex4"];
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_aliases`, {
                 actions: [
                     { add: { indices: add, alias: aliasName } },
@@ -651,8 +651,8 @@ describe('ElasticTools', async() => {
             .reply(200, { "acknowledged": true });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -679,7 +679,7 @@ describe('ElasticTools', async() => {
             
             //This is the nock for getIndicesOlderThan
             //If the creation date is now, then there is nothing older.
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/_alias/${aliasName}`)
                 .reply(200, {
                     [indexName]: {
@@ -690,8 +690,8 @@ describe('ElasticTools', async() => {
                 });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -709,7 +709,7 @@ describe('ElasticTools', async() => {
         if ('handles 404', async () => {
             const aliasName = 'bryantestidx';
 
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/_alias/${aliasName}`)
                 .reply(404, {
                     "error": `alias [${aliasName}] missing`,
@@ -717,8 +717,8 @@ describe('ElasticTools', async() => {
                 });
 
                 const client = new elasticsearch.Client({
-                    host: 'http://example.org:9200',
-                    apiVersion: '5.6'
+                    host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                    apiVersion: '7.x'
                 });            
                 
             const estools = new ElasticTools(logger, client);
@@ -735,13 +735,13 @@ describe('ElasticTools', async() => {
 
         if ('handles Exception', async () => {
             const aliasName = 'bryantestidx';
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/_alias/${aliasName}`)
                 .reply(500);
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });
 
             const estools = new ElasticTools(logger, client);
@@ -872,12 +872,12 @@ describe('ElasticTools', async() => {
             ]
         }
 
-        const num11Req = '{"index":{"_index":"twitter","_type":"tweet","_id":"11"}}\n' +
+        const num11Req = '{"index":{"_index":"twitter","_id":"11"}}\n' +
                          '{"username":"bob","message":"tweettweet"}\n';
 
-        const num12Req = '{"index":{"_index":"twitter","_type":"tweet","_id":"12"}}\n' +
+        const num12Req = '{"index":{"_index":"twitter","_id":"12"}}\n' +
                          '{"username":"bob","message":"tweettweet"}\n' +
-                         '{"index":{"_index":"twitter","_type":"tweet","_id":"12"}}\n' +
+                         '{"index":{"_index":"twitter","_id":"12"}}\n' +
                          '{"username":"bob","message":"tweettweet"}\n';
 
         it.each([
@@ -945,15 +945,15 @@ describe('ElasticTools', async() => {
         ])(
             'indexes %s', 
             async (name, docArr, reqbody, response, expected) => {
-                const scope = nock('http://example.org:9200')
+                const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .post(`/_bulk`, (body) => {
                     return body === reqbody;                    
                 })
                 .reply(200, response);
 
                 const client = new elasticsearch.Client({
-                    host: 'http://example.org:9200',
-                    apiVersion: '5.6'
+                    host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                    apiVersion: '7.x'
                 });            
         
                 const estools = new ElasticTools(logger, client);
@@ -966,15 +966,15 @@ describe('ElasticTools', async() => {
         )
 
         it('throws on server error', async () => {
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
             .post(`/_bulk`, (body) => {
                 return true
             })
             .reply(500);
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
     
             const estools = new ElasticTools(logger, client);
@@ -1003,15 +1003,15 @@ describe('ElasticTools', async() => {
             const aliasName = 'bryantestidx';
 
             //If the creation date is now, then there is nothing older.
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .delete(`/${aliasName}_2`)
                 .reply(200, {
                     "acknowledged": true
                 })
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -1034,15 +1034,15 @@ describe('ElasticTools', async() => {
             
             //This is the nock for getIndicesOlderThan
             //If the creation date is now, then there is nothing older.
-            const scope = nock('http://example.org:9200')
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200')
                 .get(`/${aliasName}*/_settings/index.creation_date`)
                 .reply(200, {
                     [aliasName + "_1"]:{ "settings": {"index": {"creation_date":now}}}
                 });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -1060,7 +1060,7 @@ describe('ElasticTools', async() => {
             const aliasName = 'bryantestidx';
 
             //Setup the first nock
-            const scope = nock('http://example.org:9200');
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200');
 
             //Setup the first nock for getIndicesOlderThan
             scope.get(`/${aliasName}*/_settings/index.creation_date`)
@@ -1080,8 +1080,8 @@ describe('ElasticTools', async() => {
                 });
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);
@@ -1098,7 +1098,7 @@ describe('ElasticTools', async() => {
             const aliasName = 'bryantestidx';
 
             //Setup the first nock
-            const scope = nock('http://example.org:9200');
+            const scope = nock('http://ncias-d2433-v.nci.nih.gov:9200');
 
             //Setup the first nock for getIndicesOlderThan
             scope.get(`/${aliasName}*/_settings/index.creation_date`)
@@ -1126,8 +1126,8 @@ describe('ElasticTools', async() => {
                 })
 
             const client = new elasticsearch.Client({
-                host: 'http://example.org:9200',
-                apiVersion: '5.6'
+                host: 'http://ncias-d2433-v.nci.nih.gov:9200',
+                apiVersion: '7.x'
             });            
             
             const estools = new ElasticTools(logger, client);

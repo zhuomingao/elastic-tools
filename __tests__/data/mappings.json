@@ -1,6 +1,6 @@
 {
     "mappings": {
-        "resource": {
+        
             "properties": {
                 "body": {
                     "type": "keyword",
@@ -9,8 +9,7 @@
                             "type": "text",
                             "analyzer": "englishfulltext"
                         }
-                    },
-                    "include_in_all": true
+                    }
                 },
                 "description": {
                     "type": "keyword",
@@ -19,9 +18,7 @@
                             "type": "text",
                             "analyzer": "englishfulltext"
                         }
-                    },
-                    "include_in_all": true
-                },
+                    }},
                 "docs": {
                     "type": "nested",
                     "include_in_root": true,
@@ -37,8 +34,7 @@
                     }
                 },
                 "id": {
-                    "type": "integer",
-                    "include_in_all": true
+                    "type": "integer"
                 },
                 "pocs": {
                     "type": "nested",
@@ -124,7 +120,6 @@
                 },
                 "resourceAccess": {
                     "type": "nested",
-                    "include_in_root": true,
                     "properties": {
                         "type": {
                             "type": "keyword"
@@ -140,9 +135,13 @@
                         "_fulltext": {
                             "type": "text",
                             "analyzer": "englishfulltext"
+                        },
+                        "_sort": {
+                            "type": "text",
+                            "analyzer": "keyword_ci",
+                            "fielddata" : true
                         }
-                    },
-                    "include_in_all": true
+                    }
                 },
                 "toolTypes": {
                     "type": "nested",
@@ -178,10 +177,8 @@
                     }
                 },
                 "website": {
-                    "type": "keyword",
-                    "include_in_all": true
+                    "type": "keyword"
                 }
             }
         }
     }
-}

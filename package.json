@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NCIOCPL/elastic-tools.git"
+    "url": "git+https://github.com/zhuomingao/elastic-tools.git"
   },
   "author": "Bryan Pizzillo",
   "license": "CC0-1.0",
@@ -23,14 +23,14 @@
   },
   "homepage": "https://github.com/NCIOCPL/elastic-tools#readme",
   "dependencies": {
-    "elasticsearch": "^14.2.2",
+    "elasticsearch": "^16.7.1",
     "moment": "^2.22.0"
   },
   "devDependencies": {
-    "@types/elasticsearch": "^5.0.24",
+    "@types/elasticsearch": "^5.0.37",
     "@types/jest": "^23.1.1",
     "@types/node": "^10.3.4",
-    "jest": "^23.1.0",
+    "jest": "^23.6.0",
     "nock": "^9.3.3",
     "winston": "^3.0.0",
     "winston-null-transport": "git+https://github.com/NCIOCPL/winston-null-transport.git#1.0.0"
